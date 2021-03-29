@@ -9,11 +9,15 @@
   },
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.7.2",
     "dotenv": "^8.2.0",
     "express": "4.17.1",
     "kerberos": "1.1.4",
+    "lodash": "^4.17.21",
     "parse": "2.19.0",
-    "parse-server": "4.5.0"
+    "parse-dashboard": "^2.1.0",
+    "parse-server": "4.5.0",
+    "sharp": "^0.28.0"
   },
   "scripts": {
     "start": "node -r dotenv/config index.js",
