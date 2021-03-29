@@ -3,6 +3,7 @@
 
 const express = require('express');
 const ParseServer = require('parse-server').ParseServer;
+const ParseDashboard = require('parse-dashboard');
 const path = require('path');
 const args = process.argv || [];
 const test = args.some(arg => arg.includes('jasmine'));
@@ -12,11 +13,11 @@ const databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 if (!databaseUri) {
   console.log('DATABASE_URI not specified, falling back to localhost.');
 }
-const config = {
+const parseServerConfig = {
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.CLOUD_CODE_MAIN || __dirname + '/cloud/main.js',
   appId: process.env.APP_ID || 'myAppId',
-  masterKey: process.env.MASTER_KEY || '', //Add your master key here. Keep it secret!
+  masterKey: process.env.MASTER_KEY || 'myMasterKey', //Add your master key here. Keep it secret!
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse', // Don't forget to change to https if needed
   liveQuery: {
     classNames: ['Posts', 'Comments'], // List of classes to support for query subscriptions
@@ -34,8 +35,34 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 // Serve the Parse API on the /parse URL prefix
 const mountPath = process.env.PARSE_MOUNT || '/parse';
 if (!test) {
-  const api = new ParseServer(config);
+  const api = new ParseServer(parseServerConfig);
   app.use(mountPath, api);
+}
+
+// Serve the ParseDashboard API
+if(!test) {
+  const dashboard = new ParseDashboard(
+    {
+      apps: [
+        {
+          serverURL: parseServerConfig.serverURL,
+          appId: parseServerConfig.appId,
+          masterKey: parseServerConfig.masterKey,
+          appName: 'My Parse Server App',
+          supportedPushLocales: ["en", "fr", "gr"]
+        }
+      ],
+      // users: [
+      //   {
+      //     user: 'admin',
+      //     pass: 'admin',
+      //     apps: [{appId: parseServerConfig.appId}]
+      //   }
+      // ]
+    },
+    { allowInsecureHTTP: true }
+  );
+  app.use('/dashboard', dashboard)
 }
 
 // Parse Server plays nicely with the rest of your web routes
@@ -61,5 +88,5 @@ if (!test) {
 
 module.exports = {
   app,
-  config,
+  config: parseServerConfig,
 };
