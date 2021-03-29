@@ -21,6 +21,7 @@
   },
   "scripts": {
     "start": "node -r dotenv/config index.js",
+    "start-node-open-url": "google-chrome http://localhost:1337/dashboard && node -r dotenv/config index.js",
     "lint": "eslint --cache ./cloud && eslint --cache index.js && eslint --cache ./spec",
     "lint-fix": "eslint --cache --fix ./cloud && eslint --cache --fix index.js && eslint --cache  --fix./spec",
     "test": "mongodb-runner start && jasmine",
