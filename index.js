@@ -41,28 +41,28 @@ if (!test) {
 
 // Serve the ParseDashboard API
 if(!test) {
-  const dashboard = new ParseDashboard(
-    {
-      apps: [
-        {
-          serverURL: parseServerConfig.serverURL,
-          appId: parseServerConfig.appId,
-          masterKey: parseServerConfig.masterKey,
-          appName: 'My Parse Server App',
-          supportedPushLocales: ["en", "fr", "gr"]
-        }
-      ],
-      // users: [
-      //   {
-      //     user: 'admin',
-      //     pass: 'admin',
-      //     apps: [{appId: parseServerConfig.appId}]
-      //   }
-      // ]
-    },
-    { allowInsecureHTTP: true }
-  );
-  app.use('/dashboard', dashboard)
+  const parseDashboradConfig = {
+    apps: [
+      {
+        serverURL: parseServerConfig.serverURL,
+        appId: parseServerConfig.appId,
+        masterKey: parseServerConfig.masterKey,
+        appName: process.env.APP_NAME || 'myAppName',
+        // supportedPushLocales: ["en", "fr", "gr"]
+      }
+    ],
+    // users: [
+    //   {
+    //     user: 'admin',
+    //     pass: 'admin',
+    //     apps: [{appId: parseServerConfig.appId}]
+    //   }
+    // ]
+  };
+  const parseDashboardOptions = { allowInsecureHTTP: true };
+  const parseDashboard = new ParseDashboard(parseDashboradConfig, parseDashboardOptions);
+
+  app.use('/dashboard', parseDashboard);
 }
 
 // Parse Server plays nicely with the rest of your web routes
