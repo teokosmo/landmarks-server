@@ -1,5 +1,3 @@
-const Parse = require("parse/lib/node/Parse");
-
 Parse.Cloud.define('hello', (req) => {
   req.log.info(req);
   return 'Hi';
