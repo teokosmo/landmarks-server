@@ -1,3 +1,5 @@
+const sharp = require('sharp');
+
 Parse.Cloud.define('hello', (req) => {
   req.log.info(req);
   return 'Hi';
@@ -15,8 +17,26 @@ Parse.Cloud.beforeSave('Test', () => {
   throw new Parse.Error(9001, 'Saving test objects is not available.');
 });
 
-Parse.Cloud.beforeSave('Landmark', req => {
-  req.log.info('beforeSave Landmark');
+Parse.Cloud.beforeSave('Landmark', async req => {
+  const photoFile = req.object.get('photo'); // ParseFile, https://parseplatform.org/Parse-SDK-JS/api/master/Parse.File.html
+  const origPhotoFile = req.original.get('photo');
+  const photoIsTheSame = (photoFile && origPhotoFile && (photoFile.url() === origPhotoFile.url()));
+  if (photoFile && !photoIsTheSame) {
+    const photoFileResponse = await Parse.Cloud.httpRequest({
+      url: photoFile.url()
+    });
+    const photoFileResponseBuffer = photoFileResponse.buffer;
+
+    const photoThumbFileName = `thumb${photoFile.name().substr(photoFile.name().indexOf('_'))}`;
+    const photoThumbBuffer = await sharp(photoFileResponseBuffer).resize(250, 250).toBuffer();
+    const photoThumbParseFile = new Parse.File(photoThumbFileName, { base64: photoThumbBuffer.toString('base64') });
+    const photoThumbParseFileSaved = await photoThumbParseFile.save();
+  
+    req.object.set('photo_thumb', photoThumbParseFileSaved);
+  }
+});
+
+Parse.Cloud.afterSave('Landmark', async req => {
 });
 
 // Parse.Cloud.beforeFind('Landmark', (req) => {
