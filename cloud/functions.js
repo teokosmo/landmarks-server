@@ -62,10 +62,10 @@ Parse.Cloud.afterFind('Landmark', async req => {
   const queryWithObjectId = queryJSON.where && queryJSON.where.objectId;
   const objAttributes2Remove = ['ACL'];
 
-  if (!queryWithObjectId) {
-  // remove attributes when NOT selecting a specific object
-    objAttributes2Remove.push('description', 'photo');
-  }
+  // if (!queryWithObjectId) {
+  // // remove attributes when NOT selecting a specific object
+  //   objAttributes2Remove.push('description', 'photo');
+  // }
 
   // create new objects list with attributes removed
   const newObjects = [];
