@@ -53,13 +53,13 @@ if(!test) {
         // supportedPushLocales: ["en", "fr", "gr"]
       }
     ],
-    // users: [
-    //   {
-    //     user: 'admin',
-    //     pass: 'admin',
-    //     apps: [{appId: parseServerConfig.appId}]
-    //   }
-    // ]
+    users: [
+      {
+        user: 'admin',
+        pass: 'admin',
+        apps: [{appId: parseServerConfig.appId}]
+      }
+    ]
   };
   const parseDashboardOptions = { allowInsecureHTTP: true };
   const parseDashboard = new ParseDashboard(parseDashboradConfig, parseDashboardOptions);
